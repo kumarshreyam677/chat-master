@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Frontend build output
+frontend/build/
+
+# macOS
+.DS_Store

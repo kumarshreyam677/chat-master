@@ -1,0 +1,115 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "mapbox-gl/dist/mapbox-gl.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --wispr-bg: #0B141A;
+    --wispr-panel: #111B21;
+    --wispr-surface: #202C33;
+    --wispr-surface-hover: #2A3942;
+    --wispr-primary: #00A884;
+    --wispr-primary-hover: #008F70;
+    --wispr-accent: #25D366;
+    --wispr-sent: #005C4B;
+    --wispr-received: #202C33;
+    --wispr-text: #E9EDEF;
+    --wispr-text-muted: #8696A0;
+    --wispr-border: #222D34;
+}
+
+html, body, #root {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--wispr-bg);
+    color: var(--wispr-text);
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.01em;
+}
+
+code, .mono {
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2A3942; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #374045; }
+
+/* Selection */
+::selection { background: var(--wispr-primary); color: #111B21; }
+
+/* Utilities */
+.wispr-glass {
+    background: rgba(17, 27, 33, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+
+.wispr-doodle-bg {
+    background-color: var(--wispr-bg);
+    background-image:
+        radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        radial-gradient(rgba(0,168,132,0.04) 1px, transparent 1px);
+    background-size: 22px 22px, 40px 40px;
+    background-position: 0 0, 11px 11px;
+}
+
+.msg-bubble-sent {
+    background: var(--wispr-sent);
+    color: #E9EDEF;
+    border-radius: 12px 12px 4px 12px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+    max-width: 65%;
+    word-break: break-word;
+    position: relative;
+}
+
+.msg-bubble-received {
+    background: var(--wispr-received);
+    color: #E9EDEF;
+    border-radius: 12px 12px 12px 4px;
+    padding: 8px 12px;
+    box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
+    max-width: 65%;
+    word-break: break-word;
+}
+
+.pulse-dot {
+    animation: pulse-dot 1.2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+    0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+    40% { opacity: 1; transform: translateY(-2px); }
+}
+
+.fade-in-up {
+    animation: fadeInUp 0.24s ease-out both;
+}
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.mapboxgl-canvas { border-radius: 12px; }
+.mapboxgl-ctrl-attrib { display: none; }
+
+/* Base tailwind shim */
+@layer base {
+    * { border-color: var(--wispr-border); }
+}
