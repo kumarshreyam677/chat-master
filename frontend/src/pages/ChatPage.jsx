@@ -28,10 +28,16 @@ export default function ChatPage() {
   const [showNew, setShowNew] = useState(false);
   const [typingBy, setTypingBy] = useState(null);
   const [loadingMsgs, setLoadingMsgs] = useState(false);
+  const [loadError, setLoadError] = useState("");
 
   const loadConvos = async () => {
-    const { data } = await api.get("/chats");
-    setConvos(data.conversations);
+    try {
+      const { data } = await api.get("/chats");
+      setConvos(data.conversations);
+      setLoadError("");
+    } catch (error) {
+      setLoadError(error.response?.data?.error || "Could not load your chats.");
+    }
   };
 
   useEffect(() => { loadConvos(); }, []);
@@ -169,9 +175,14 @@ export default function ChatPage() {
 
         {/* Convos list */}
         <div className="flex-1 overflow-y-auto">
+          {loadError && (
+            <div className="mx-3 mt-3 rounded-xl border border-red-400/30 bg-red-400/10 p-3 text-xs text-red-200">
+              {loadError}
+            </div>
+          )}
           {filtered.length === 0 && (
             <div className="p-8 text-center text-sm text-[#8696A0]">
-              No chats in this folder yet.
+              {loadError ? "Check your connection and try again." : "No chats in this folder yet. Use + to find a friend by username."}
             </div>
           )}
           {filtered.map((c) => {
@@ -438,16 +449,27 @@ function ChatWindow({ conversation, messages, loading, me, typingBy, socket, onS
 function NewChatModal({ onClose, onCreated }) {
   const [q, setQ] = useState("");
   const [users, setUsers] = useState([]);
+  const [error, setError] = useState("");
   useEffect(() => {
     const t = setTimeout(async () => {
-      const { data } = await api.get("/auth/users", { params: { q } });
-      setUsers(data.users);
+      try {
+        const { data } = await api.get("/auth/users", { params: { q: q.trim() } });
+        setUsers(data.users);
+        setError("");
+      } catch (requestError) {
+        setUsers([]);
+        setError(requestError.response?.data?.error || "Could not search users.");
+      }
     }, 200);
     return () => clearTimeout(t);
   }, [q]);
   const create = async (u) => {
-    const { data } = await api.post("/chats", { participantIds: [u.id], isGroup: false });
-    onCreated(data.conversation);
+    try {
+      const { data } = await api.post("/chats", { participantIds: [u.id], isGroup: false });
+      onCreated(data.conversation);
+    } catch (requestError) {
+      setError(requestError.response?.data?.error || "Could not start this chat.");
+    }
   };
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 grid place-items-center" onClick={onClose} data-testid="new-chat-modal">
@@ -463,6 +485,7 @@ function NewChatModal({ onClose, onCreated }) {
           </div>
         </div>
         <div className="max-h-80 overflow-y-auto">
+          {error && <div className="px-4 pb-2 text-xs text-red-300">{error}</div>}
           {users.map((u) => (
             <button key={u.id} onClick={() => create(u)} data-testid="new-chat-user-item" className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-[#2A3942] text-left">
               <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00A884] to-[#005C4B] grid place-items-center font-bold text-[#0B141A]">
@@ -474,7 +497,7 @@ function NewChatModal({ onClose, onCreated }) {
               </div>
             </button>
           ))}
-          {users.length === 0 && <div className="p-6 text-center text-sm text-[#8696A0]">No users found</div>}
+          {users.length === 0 && !error && <div className="p-6 text-center text-sm text-[#8696A0]">No users found</div>}
         </div>
       </div>
     </div>

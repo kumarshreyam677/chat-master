@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { MessageSquareText, Store, LogOut, User as UserIcon } from "lucide-react";
 
@@ -40,7 +40,7 @@ export default function AppShell({ children }) {
         </button>
       </aside>
 
-      <main className="flex-1 min-w-0 flex">{children}</main>
+      <main className="flex-1 min-w-0 flex"><Outlet /></main>
     </div>
   );
 }
